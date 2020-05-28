@@ -1,6 +1,8 @@
 CREATE DATABASE `music`;
 
-CREATE TABLE `users` {
+USE `music`;
+
+CREATE TABLE `users` (
   `userId` bigint(20) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) DEFAULT NULL,
   `password` varchar(60) NOT NULL,
@@ -13,4 +15,4 @@ CREATE TABLE `users` {
   `lastLoginDateTime` datetime DEFAULT NULL,
   `created` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`userId`)
-};
+);
