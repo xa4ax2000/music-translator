@@ -32,7 +32,7 @@ public class ReplicationDataSourceConfig {
     @Bean
     // @DependsOn required so we can ensure these beans are initialized before initializing this bean!
     // Note: readOnlyDataSource should be implemented if we plan to separate out read hits and write hits (for performance)
-    @DependsOn({"writeDataSource", "routingDataSource"})
+    @DependsOn({"writeDataSource", "readDataSource", "routingDataSource"})
     public DataSource dataSource() { return new LazyConnectionDataSourceProxy(routingDataSource());}
 
     @Bean
