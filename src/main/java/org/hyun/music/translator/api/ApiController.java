@@ -4,8 +4,11 @@ public abstract class ApiController {
     private static final String API_PATH = "/api/v1";
 
     // Authentication APIs (Handled internally via filters)
-    public static final String AUTHENTICATE_URL = API_PATH + "/authenticate";
-    public static final String SIGN_OUT_URL = API_PATH + "/signout";
+    public static final String AUTHENTICATE_PATH = API_PATH + "/authenticate";
+    public static final String SIGN_IN_URL = AUTHENTICATE_PATH + "/signin";
+    public static final String TOKEN_URL = AUTHENTICATE_PATH + "/token";
+    public static final String REFRESH_URL = AUTHENTICATE_PATH + "/refresh";
+    public static final String SIGN_OUT_URL = AUTHENTICATE_PATH + "/signout";
 
     // Account APIs
     public static final String ACCOUNT_PATH = "/account";
