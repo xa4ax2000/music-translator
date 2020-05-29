@@ -11,13 +11,13 @@ public abstract class ApiController {
     public static final String SIGN_OUT_URL = AUTHENTICATE_PATH + "/signout";
 
     // Account APIs
-    public static final String ACCOUNT_PATH = "/account";
-    public static final String REGISTER_USER_URL = API_PATH + ACCOUNT_PATH + "/register";
-    public static final String DELETE_USER_URL = API_PATH + ACCOUNT_PATH + "/delete";
+    public static final String ACCOUNT_PATH = API_PATH + "/account";
+    public static final String REGISTER_USER_URL = ACCOUNT_PATH + "/register";
+    public static final String DELETE_USER_URL = ACCOUNT_PATH + "/delete";
 
     // Application APIs
-    public static final String MUSIC_PATH = "/music";
-    public static final String TRANSLATE_URL = API_PATH + MUSIC_PATH + "/translate";
+    public static final String MUSIC_PATH = API_PATH + "/music";
+    public static final String TRANSLATE_URL = MUSIC_PATH + "/translate";
 
     // Spring Boot Actuator services
     public static final String AUTOCONFIG_ENDPOINT = "/autoconfig";
