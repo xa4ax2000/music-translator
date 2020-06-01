@@ -1,15 +1,23 @@
 package org.hyun.music.translator.model.auth;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 @Entity
 @Table(name="users")
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,7 +45,7 @@ public class User implements Serializable {
     @NotBlank
     @Convert(converter = UserTypeConverter.class)
     @Column(name = "usertype")
-    private String userType;
+    private UserType userType;
 
     @Column(name = "refreshtoken")
     private String refreshToken;
@@ -47,17 +55,17 @@ public class User implements Serializable {
     private boolean mDisabled;
 
     @Column(name = "lastlogindatetime")
-    private Date mLastLoginDate;
+    private LocalDateTime mLastLoginDate;
 
     @Column(name = "created")
-    private Date mCreated;
+    private Timestamp mCreated;
 
-    public Date getCreated() {
-        return defensiveCopy(mCreated);
+    public Timestamp getCreated() {
+        return mCreated;
     }
 
-    public void setCreated(Date created) {
-        mCreated = defensiveCopy(created);
+    public void setCreated(Timestamp created) {
+        mCreated = created;
     }
 
     public User() {
@@ -95,19 +103,19 @@ public class User implements Serializable {
         this.mDisabled = mDisabled;
     }
 
-    public Date getLastLoginDate() {
-        return defensiveCopy(mLastLoginDate);
+    public LocalDateTime getLastLoginDate() {
+        return mLastLoginDate;
     }
 
-    public void setLastLoginDate(Date mLastLoginDate) {
-        this.mLastLoginDate = defensiveCopy(mLastLoginDate);
+    public void setLastLoginDate(LocalDateTime mLastLoginDate) {
+        this.mLastLoginDate = mLastLoginDate;
     }
 
-    public String getUserType() {
+    public UserType getUserType() {
         return userType;
     }
 
-    public void setUserType(String userType) {
+    public void setUserType(UserType userType) {
         this.userType = userType;
     }
 
@@ -163,11 +171,42 @@ public class User implements Serializable {
             return username.equals(other.username);
     }
 
-    // Setting defensive copy so this information doesn't get manipulated
-    private Date defensiveCopy(final Date dateToCopy){
-        if(dateToCopy == null)
-            return null;
-        return new Date(dateToCopy.getTime());
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> grantedAuthority = new ArrayList<>();
+        grantedAuthority.add(new SimpleGrantedAuthority(getAuthorityFromUserType(this.userType)));
+        return grantedAuthority;
+    }
+
+    private String getAuthorityFromUserType(UserType userType) {
+        switch (userType){
+            case SUPER_USER:
+                return Authority.ROLE_SUPER_USER;
+            case USER:
+                return Authority.ROLE_USER;
+            default:
+                return Authority.ROLE_NO_AUTHORITY;
+        }
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !this.mDisabled;
     }
 
 }
