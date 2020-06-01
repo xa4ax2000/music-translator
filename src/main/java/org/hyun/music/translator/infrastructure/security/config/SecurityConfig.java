@@ -2,10 +2,18 @@ package org.hyun.music.translator.infrastructure.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hyun.music.translator.api.ApiController;
+import org.hyun.music.translator.infrastructure.authenticator.DatabaseAuthenticator;
+import org.hyun.music.translator.infrastructure.authenticator.ExternalServiceAuthenticator;
 import org.hyun.music.translator.infrastructure.security.ActuatorEndpointAuthenticationFilter;
 import org.hyun.music.translator.infrastructure.security.AuthenticationFilter;
+import org.hyun.music.translator.infrastructure.security.TokenService;
+import org.hyun.music.translator.infrastructure.security.provider.BackendAdminUsernamePasswordAuthenticationProvider;
+import org.hyun.music.translator.infrastructure.security.provider.DomainUsernamePasswordAuthenticationProvider;
+import org.hyun.music.translator.infrastructure.security.provider.TokenAuthenticationProvider;
 import org.hyun.music.translator.model.auth.Authority;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -34,6 +42,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new ObjectMapper();
     }
 
+    @Bean
+    public AuthenticationProvider domainUsernamePasswordAuthenticationProvider(){
+        return new DomainUsernamePasswordAuthenticationProvider(tokenService(), externalServiceAuthenticator());
+    }
+
+    @Bean
+    public AuthenticationProvider backendAdminUsernamePasswordAuthenticationProvider(){
+        return new BackendAdminUsernamePasswordAuthenticationProvider();
+    }
+
+    @Bean
+    public TokenService tokenService(){ return new TokenService();}
+
+    @Bean
+    public ExternalServiceAuthenticator externalServiceAuthenticator() { return new DatabaseAuthenticator();}
+
+    @Bean
+    public AuthenticationProvider tokenAuthenticationProvider(){
+        return new TokenAuthenticationProvider(tokenService());
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
@@ -69,4 +97,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 ApiController.METRICS_ENDPOINT, ApiController.SHUTDOWN_ENDPOINT};
     }
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(domainUsernamePasswordAuthenticationProvider()).
+                authenticationProvider(backendAdminUsernamePasswordAuthenticationProvider()).
+                authenticationProvider(tokenAuthenticationProvider());
+
+    }
 }
