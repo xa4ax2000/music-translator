@@ -1,7 +1,8 @@
 package org.hyun.music.translator.api.account;
 
-import org.hyun.music.translator.model.account.exception.UserExistsException;
-import org.hyun.music.translator.model.account.exception.UserNotFoundException;
+import org.hyun.music.translator.api.account.properties.AccountErrorCodes;
+import org.hyun.music.translator.model.exception.account.UserExistsException;
+import org.hyun.music.translator.model.exception.account.UserNotFoundException;
 import org.hyun.music.translator.model.auth.User;
 import org.hyun.music.translator.model.auth.UserType;
 import org.hyun.music.translator.model.payload.inbound.DeleteUserRequest;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -22,9 +24,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AccountErrorCodes accountErrorCodes;
+
+    @Transactional
     public void registerNewUserAccount(SignUpRequest signUpRequest) throws UserExistsException {
         if (userExists(signUpRequest.getUsername())) {
-            throw new UserExistsException(
+            throw new UserExistsException(accountErrorCodes,
                     "There is an account with the username:" + signUpRequest.getUsername());
         }
         User user = new User();
@@ -49,9 +55,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUserAccount(DeleteUserRequest deleteUserRequest) throws UserNotFoundException {
         if (!userExists(deleteUserRequest.getUsername())){
-            throw new UserNotFoundException(
+            throw new UserNotFoundException(accountErrorCodes,
                     "There is no account with the username: " + deleteUserRequest.getUsername());
         }
         userRepository.deleteByUsername(deleteUserRequest.getUsername());

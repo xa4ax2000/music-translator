@@ -12,9 +12,11 @@ import org.hyun.music.translator.infrastructure.security.provider.DomainUsername
 import org.hyun.music.translator.infrastructure.security.provider.TokenAuthenticationProvider;
 import org.hyun.music.translator.model.auth.Authority;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -24,6 +26,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletResponse;
 
+@Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
@@ -64,6 +67,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers(ApiController.REGISTER_USER_URL);
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception{
         // CORS and CSRF will be enabled by default
         http
@@ -76,7 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .authorizeRequests()
                     .antMatchers(actuatorEndpoints())
-                        .hasRole(Authority.ROLE_BACKEND_ADMIN)
+                        .hasRole(Authority.BACKEND_ADMIN)
                     .anyRequest()
                         .authenticated()
                     .and()

@@ -36,7 +36,7 @@ public class BackendAdminUsernamePasswordAuthenticationProvider implements Authe
         }
 
         return new UsernamePasswordAuthenticationToken(username, null,
-                AuthorityUtils.commaSeparatedStringToAuthorityList(Authority.ROLE_BACKEND_ADMIN));
+                AuthorityUtils.commaSeparatedStringToAuthorityList(Authority.BACKEND_ADMIN));
     }
 
     private boolean credentialsInvalid(String username, String password){

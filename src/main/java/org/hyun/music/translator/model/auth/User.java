@@ -42,7 +42,7 @@ public class User implements Serializable, UserDetails {
     @Column(name = "lastname")
     private String lastName;
 
-    @NotBlank
+    @NotNull
     @Convert(converter = UserTypeConverter.class)
     @Column(name = "usertype")
     private UserType userType;
@@ -181,11 +181,11 @@ public class User implements Serializable, UserDetails {
     private String getAuthorityFromUserType(UserType userType) {
         switch (userType){
             case SUPER_USER:
-                return Authority.ROLE_SUPER_USER;
+                return Authority.SUPER_USER;
             case USER:
-                return Authority.ROLE_USER;
+                return Authority.USER;
             default:
-                return Authority.ROLE_NO_AUTHORITY;
+                return Authority.NO_AUTHORITY;
         }
     }
 

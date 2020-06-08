@@ -1,8 +1,7 @@
 package org.hyun.music.translator.api.account;
 
 import org.hyun.music.translator.api.ApiController;
-import org.hyun.music.translator.model.account.exception.UserExistsException;
-import org.hyun.music.translator.model.account.exception.UserNotFoundException;
+import org.hyun.music.translator.model.exception.BaseException;
 import org.hyun.music.translator.model.auth.Authority;
 import org.hyun.music.translator.model.payload.inbound.DeleteUserRequest;
 import org.hyun.music.translator.model.payload.inbound.SignUpRequest;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@PreAuthorize("hasAuthority('"+ Authority.ROLE_SUPER_USER+"')")
 public class AuthController extends ApiController {
 
     Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
@@ -32,7 +30,7 @@ public class AuthController extends ApiController {
         try {
             userService.registerNewUserAccount(signUpRequest);
             return ResponseEntity.ok().build();
-        }catch(UserExistsException ex){
+        }catch(BaseException ex){
             return ResponseEntity.ok(new ErrorResponse(ex.getErrorCode(), ex.getMessage()));
         }catch(Exception ex){
             LOGGER.error(ex.getMessage(), ex);
@@ -40,12 +38,13 @@ public class AuthController extends ApiController {
         }
     }
 
+    @PreAuthorize("hasAuthority('"+ Authority.SUPER_USER+"')")
     @RequestMapping(value=DELETE_USER_URL, consumes = "application/json", produces = "application/json", method = RequestMethod.POST)
     public ResponseEntity<?> delete(@RequestBody DeleteUserRequest deleteUserRequest){
         try{
             userService.deleteUserAccount(deleteUserRequest);
             return ResponseEntity.ok().build();
-        }catch(UserNotFoundException ex){
+        }catch(BaseException ex){
             return ResponseEntity.ok(new ErrorResponse(ex.getErrorCode(), ex.getMessage()));
         }catch(Exception ex){
             LOGGER.error(ex.getMessage(), ex);
