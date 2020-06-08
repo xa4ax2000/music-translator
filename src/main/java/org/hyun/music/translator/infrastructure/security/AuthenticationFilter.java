@@ -59,7 +59,7 @@ public class AuthenticationFilter extends GenericFilterBean {
             }else{
                 String token = Optional
                         .ofNullable(httpRequest.getHeader("X-Auth-Token"))
-                        .orElseThrow(() -> new BadCredentialsException(""));
+                        .orElseThrow(() -> new BadCredentialsException("Token is missing"));
                 if(postToRefresh(httpRequest, resourcePath)){
                     LOGGER.debug("Trying to refresh user {} by X-Auth-Token method", token);
                     processRefreshAuthentication(token);

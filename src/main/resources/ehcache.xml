@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+    <!--    14400 == 4 hours
+    No disk storage
+    Unlimited memory for elements
+    Elmeents are evicted by Spring scheduled task
+    by default run every 30 minutes
+    1200 == 10 min
+    Invalidate tokens after 10 minutes
+    -->
+    <cache name="restApiAuthTokenCache" maxElementsInMemory="0" overflowToDisk="false"
+            timeToLiveSeconds="14400" timeToIdleSeconds="1200" memoryStoreEvictionPolicy="LRU">
+        <persistence strategy="none"/>
+    </cache>
+</ehcache>
