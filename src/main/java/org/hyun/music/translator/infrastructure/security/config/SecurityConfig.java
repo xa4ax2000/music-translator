@@ -73,8 +73,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        // CORS and CSRF will be enabled by default
+        // CORS will be enabled by default
         http
+                .csrf()
+                    .disable()
                 .exceptionHandling()
                     .authenticationEntryPoint(unauthorizedEntryPoint())
                     .and()

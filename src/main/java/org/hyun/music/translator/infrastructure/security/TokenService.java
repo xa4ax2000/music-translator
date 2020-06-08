@@ -51,7 +51,7 @@ public class TokenService {
                 .claim("iat", System.currentTimeMillis())
                 .claim("exp", System.currentTimeMillis() + securityProperties.getJwtExpirationInMs())
                 .build();
-        JWEHeader jweHeader = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A256CBC_HS512);
+        JWEHeader jweHeader = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A256GCM);
         JWEObject jweObject = new JWEObject(jweHeader, new Payload(jwtClaimsSet.toJSONObject()));
         JWEEncrypter encrypter = new DirectEncrypter(securityProperties.getJwtSecret().getBytes());
         jweObject.encrypt(encrypter);

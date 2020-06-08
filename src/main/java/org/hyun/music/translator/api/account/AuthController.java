@@ -38,6 +38,11 @@ public class AuthController extends ApiController {
         }
     }
 
+    @RequestMapping(value=SIGN_IN_URL, consumes = "application/json", produces = "application/json", method = RequestMethod.POST)
+    public ResponseEntity<?> signin(){
+        return ResponseEntity.ok().build();
+    }
+
     @PreAuthorize("hasAuthority('"+ Authority.SUPER_USER+"')")
     @RequestMapping(value=DELETE_USER_URL, consumes = "application/json", produces = "application/json", method = RequestMethod.POST)
     public ResponseEntity<?> delete(@RequestBody DeleteUserRequest deleteUserRequest){

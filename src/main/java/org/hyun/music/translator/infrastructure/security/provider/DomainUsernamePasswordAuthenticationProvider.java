@@ -12,9 +12,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 public class DomainUsernamePasswordAuthenticationProvider implements AuthenticationProvider {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomainUsernamePasswordAuthenticationProvider.class);
 
     private final TokenService tokenService;
 
@@ -41,6 +44,7 @@ public class DomainUsernamePasswordAuthenticationProvider implements Authenticat
             resultOfAuthentication.setToken(newToken);
             tokenService.store(newToken, resultOfAuthentication);
         }catch (JOSEException e) {
+            LOGGER.error("Error generating access token: " + e.getMessage());
             throw new AuthenticationException(e.getMessage()){};
         }
 
